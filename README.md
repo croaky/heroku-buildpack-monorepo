@@ -95,23 +95,21 @@ asdf reshim ruby
 
 (
   cd server
-  bundle install --without development:test --path "$CACHE_DIR/gems"
+  bundle install --without development:test --path="$(gem env gemdir)"
 )
 
-# Create startup script
-cp -R "$ASDF_DATA_DIR" "$BUILD_DIR/.asdf"
-for item in "$BUILD_DIR"/.asdf/{bin/*,shims/*}; do
-  if [ -f "$item" ]; then
-    sed -i -e 's/\/tmp\/cache//g' "$item"
-  fi
-done
+# Copy dependencies
+mkdir -p "$BUILD_DIR/tmp/cache"
+cp -R "$ASDF_DATA_DIR" "$BUILD_DIR/tmp/cache/.asdf"
 
+# Create startup script to load dependencies
 mkdir -p "$BUILD_DIR/.profile.d"
 touch "$BUILD_DIR/.profile.d/startup.sh"
 
 cat >"$BUILD_DIR/.profile.d/startup.sh" <<EOL
-  PATH="$HOME/.asdf/bin:$PATH"
-  PATH="$HOME/.asdf/shims:$PATH"
+  export ASDF_DATA_DIR="$HOME/tmp/cache/.asdf"
+  export PATH="$ASDF_DATA_DIR/bin:$PATH:$ASDF_DATA_DIR/shims:$PATH"
+  asdf global 2.5.1
   asdf reshim ruby
 EOL
 ```
