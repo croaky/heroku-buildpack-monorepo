@@ -9,7 +9,7 @@ This buildpack has the following interface:
 * A manifest containing runtime commands,
   located at `$BUILD_SUBDIR/Procfile`.
 
-In a monorepo,
+In a [monorepo](https://www.statusok.com/monorepo),
 you might have multiple projects in subdirectories
 that each could be deployed to Heroku:
 
