@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eo pipefail
 
 # Prepare dependencies
 cache=${CACHE_DIR:-$HOME}
@@ -8,7 +8,7 @@ export ASDF_DATA_DIR="$cache/.asdf"
 export PATH="$ASDF_DATA_DIR/bin:$ASDF_DATA_DIR/shims:$PATH"
 
 if [ ! -d "$ASDF_DATA_DIR" ]; then
-  git clone https://github.com/asdf-vm/asdf.git "$ASDF_DATA_DIR" --branch v0.6.0
+  git clone https://github.com/asdf-vm/asdf.git "$ASDF_DATA_DIR"
 fi
 
 asdf_plugin_update() {
@@ -29,7 +29,7 @@ asdf_install() {
   cd client
   export NODEJS_CHECK_SIGNATURES=no
   asdf_plugin_update node https://github.com/asdf-vm/asdf-nodejs.git
-  asdf_install node 8.9.0
+  asdf_install node 11.9.0
 
   if [ -d "$cache/node_modules" ]; then
     mv "$cache/node_modules" .
@@ -37,7 +37,7 @@ asdf_install() {
 
   npm install --scripts-prepend-node-path
   npm run build --scripts-prepend-node-path
-  cp -R public/ ../server/public/
+  cp -R dist/ ../server/public/
   mv node_modules "$cache"
 )
 
@@ -45,9 +45,9 @@ asdf_install() {
 (
   cd server
   asdf_plugin_update ruby https://github.com/asdf-vm/asdf-ruby.git
-  asdf_install ruby 2.5.1
-  gem install bundler --no-document
+  asdf_install ruby 2.6.1
   asdf reshim ruby
+  bundle config --delete frozen
   bundle install --without development:test --path="$(gem env gemdir)"
 )
 
@@ -62,5 +62,5 @@ touch "$BUILD_DIR/.profile.d/startup.sh"
 cat >"$BUILD_DIR/.profile.d/startup.sh" <<EOL
   export ASDF_DATA_DIR="$HOME/tmp/cache/.asdf"
   export PATH="$ASDF_DATA_DIR/bin:$PATH:$ASDF_DATA_DIR/shims:$PATH"
-  asdf global ruby 2.5.1
+  asdf global ruby 2.6.1
 EOL
