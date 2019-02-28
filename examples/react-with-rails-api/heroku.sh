@@ -28,8 +28,8 @@ asdf_install() {
 (
   cd client
   export NODEJS_CHECK_SIGNATURES=no
-  asdf_plugin_update node https://github.com/asdf-vm/asdf-nodejs.git
-  asdf_install node 11.9.0
+  asdf_plugin_update nodejs https://github.com/asdf-vm/asdf-nodejs.git
+  asdf_install nodejs 11.10.0
 
   if [ -d "$cache/node_modules" ]; then
     mv "$cache/node_modules" .
