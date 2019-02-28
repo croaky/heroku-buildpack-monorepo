@@ -19,17 +19,12 @@ asdf_plugin_update() {
   asdf plugin-update "$1"
 }
 
-asdf_install() {
-  asdf install "$1" "$2"
-  asdf local "$1" "$2"
-}
-
 # Build Node client
 (
   cd client
   export NODEJS_CHECK_SIGNATURES=no
   asdf_plugin_update nodejs https://github.com/asdf-vm/asdf-nodejs.git
-  asdf_install nodejs 11.10.0
+  asdf install nodejs 11.10.0
 
   if [ -d "$cache/node_modules" ]; then
     mv "$cache/node_modules" .
@@ -45,10 +40,12 @@ asdf_install() {
 (
   cd server
   asdf_plugin_update ruby https://github.com/asdf-vm/asdf-ruby.git
-  asdf_install ruby 2.6.1
+  asdf install ruby 2.6.1
+
   gem install bundler:2.0.1 --no-document --conservative
   gem update --system --no-document
   asdf reshim ruby
+
   bundle config --delete frozen
   bundle install --without development:test --path="$(gem env gemdir)"
 )
