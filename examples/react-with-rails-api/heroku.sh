@@ -46,6 +46,8 @@ asdf_install() {
   cd server
   asdf_plugin_update ruby https://github.com/asdf-vm/asdf-ruby.git
   asdf_install ruby 2.6.1
+  gem install bundler:2.0.1 --no-document --conservative
+  gem update --system --no-document
   asdf reshim ruby
   bundle config --delete frozen
   bundle install --without development:test --path="$(gem env gemdir)"
